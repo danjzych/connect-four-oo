@@ -10,7 +10,7 @@ class Game {
   constructor(height, width, currPlayer = 1){
     this.height = height;
     this.width = width;
-    this.board = this.makeBoard();
+    this.makeBoard();
     this.currPlayer = currPlayer;
 
     this.makeHtmlBoard()
@@ -21,17 +21,17 @@ class Game {
    */
   makeBoard() {
 
-    let newBoard = [];
+    this.board = [];
     for (let y = 0; y < this.height; y++) {
-      newBoard.push(Array.from({ length: this.width }));
+      this.board.push(Array.from({ length: this.width }));
     }
-    return newBoard;
   }
 
   /** makeHtmlBoard: make HTML table and row of column tops.*/
 
   makeHtmlBoard() {
     const HTMLBoard = document.getElementById('board');
+    HTMLBoard.innerHTML = '';
 
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement('tr');
@@ -40,7 +40,7 @@ class Game {
     for (let x = 0; x < this.width; x++) {
       const headCell = document.createElement('td');
       headCell.setAttribute('id', x);
-      headCell.addEventListener('click', this.handleClick);
+      headCell.addEventListener('click', this.handleClick.bind(this));
       top.append(headCell);
     }
 
@@ -108,7 +108,7 @@ class Game {
 
     // check for win
     if (this.checkForWin()) {
-      return endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`Player ${this.currPlayer} won!`);
     }
 
     // check for tie
