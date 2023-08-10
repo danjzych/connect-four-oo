@@ -12,12 +12,15 @@ class Game {
     this.width = width;
     this.board = this.makeBoard();
     this.currPlayer = currPlayer;
+
+    this.makeHtmlBoard()
   }
 
   /** makeBoard: create in-JS board structure:
    *   board = array of rows, each row is array of cells  (board[y][x])
    */
   makeBoard() {
+
     let newBoard = [];
     for (let y = 0; y < this.height; y++) {
       newBoard.push(Array.from({ length: this.width }));
@@ -37,7 +40,7 @@ class Game {
     for (let x = 0; x < this.width; x++) {
       const headCell = document.createElement('td');
       headCell.setAttribute('id', x);
-      headCell.addEventListener('click', handleClick);
+      headCell.addEventListener('click', this.handleClick);
       top.append(headCell);
     }
 
@@ -89,26 +92,28 @@ class Game {
 
   handleClick(evt) {
     // get x from ID of clicked cell
-    const x = Number(evt.target.id.split('-')[1]);
+    console.log(evt.target)
+    const x = +evt.target.id;
+
 
     // get next spot in column (if none, ignore click)
-    const y = findSpotForCol(x);
+    const y = this.findSpotForCol(x);
     if (y === null) {
       return;
     }
 
     // place piece in board and add to HTML table
     this.board[y][x] = this.currPlayer;
-    placeInTable(y, x);
+    this.placeInTable(y, x);
 
     // check for win
-    if (checkForWin()) {
+    if (this.checkForWin()) {
       return endGame(`Player ${this.currPlayer} won!`);
     }
 
     // check for tie
     if (this.board.every(row => row.every(cell => cell))) {
-      return endGame('Tie!');
+      return this.endGame('Tie!');
     }
 
     // switch players
@@ -174,3 +179,5 @@ class Game {
 }
 
 new Game(6, 7);
+
+//getting TypeError: this.findSpotForCol is not a function on like 100:20 - why is not a function?
