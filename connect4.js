@@ -18,9 +18,11 @@ class Game {
    *   board = array of rows, each row is array of cells  (board[y][x])
    */
   makeBoard() {
+    let newBoard = [];
     for (let y = 0; y < this.height; y++) {
-      this.board.push(Array.from({ length: this.width }));
+      newBoard.push(Array.from({ length: this.width }));
     }
+    return newBoard;
   }
 
   /** makeHtmlBoard: make HTML table and row of column tops.*/
@@ -116,11 +118,17 @@ class Game {
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
   checkForWin() {
-    function _win(cells) {
+    let height = this.height;
+    let width = this.width;
+    let board = this.board;
+    let currPlayer = this.currPlayer;
+
+    /* function _win(cells) {
       // Check four cells to see if they're all color of current player
       //  - cells: list of four (y, x) cells
       //  - returns true if all are legal coordinates & all match currPlayer
-
+      console.log(`height is ${this.height}`);
+      console.log(`width is ${this.width}`);
       return cells.every(
         ([y, x]) =>
           y >= 0 &&
@@ -129,7 +137,23 @@ class Game {
           x < this.width &&
           this.board[y][x] === this.currPlayer
       );
+    } */
+      function _win(cells) {
+        // Check four cells to see if they're all color of current player
+        //  - cells: list of four (y, x) cells
+        //  - returns true if all are legal coordinates & all match currPlayer
+        console.log(`height is ${height}`);
+        console.log(`width is ${width}`);
+        return cells.every(
+          ([y, x]) =>
+            y >= 0 &&
+            y < height &&
+            x >= 0 &&
+            x < width &&
+            board[y][x] === currPlayer
+        );
     }
+
 
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
