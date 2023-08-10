@@ -10,10 +10,27 @@ class Game {
   constructor(height, width, currPlayer = 1){
     this.height = height;
     this.width = width;
-    this.makeBoard();
     this.currPlayer = currPlayer;
+    this.isOver = false;
 
     this.makeHtmlBoard()
+    this.makeStartButton();
+  }
+
+  makeStartButton() {
+
+    const outerGame = document.getElementById('game');
+    const startButton = document.createElement('button');
+    startButton.innerText = 'Click me to (re)start';
+    startButton.setAttribute('id', 'startButton');
+
+    startButton.addEventListener('click', () => {
+      this.makeBoard();
+      this.makeHtmlBoard()
+    });
+
+    outerGame.prepend(startButton);
+
   }
 
   /** makeBoard: create in-JS board structure:
@@ -92,48 +109,43 @@ class Game {
 
   handleClick(evt) {
     // get x from ID of clicked cell
-    console.log(evt.target)
     const x = +evt.target.id;
 
+    if (!this.isOver) {
+      // get next spot in column (if none, ignore click)
+      const y = this.findSpotForCol(x);
+      if (y === null) {
+        return;
+      }
 
-    // get next spot in column (if none, ignore click)
-    const y = this.findSpotForCol(x);
-    if (y === null) {
-      return;
+      // place piece in board and add to HTML table
+      this.board[y][x] = this.currPlayer;
+      this.placeInTable(y, x);
+
+      // check for win
+      if (this.checkForWin()) {
+        //remove event listeners in top row
+
+
+        return this.endGame(`Player ${this.currPlayer} won!`);
+
+      }
+
+      // check for tie
+      if (this.board.every(row => row.every(cell => cell))) {
+        return this.endGame('Tie!');
+      }
+
+      // switch players
+      this.currPlayer = this.currPlayer === 1 ? 2 : 1;
     }
 
-    // place piece in board and add to HTML table
-    this.board[y][x] = this.currPlayer;
-    this.placeInTable(y, x);
-
-    // check for win
-    if (this.checkForWin()) {
-      return this.endGame(`Player ${this.currPlayer} won!`);
-    }
-
-    // check for tie
-    if (this.board.every(row => row.every(cell => cell))) {
-      return this.endGame('Tie!');
-    }
-
-    // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
   }
 
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
   checkForWin() {
-    let height = this.height;
-    let width = this.width;
-    let board = this.board;
-    let currPlayer = this.currPlayer;
-
-    /* function _win(cells) {
-      // Check four cells to see if they're all color of current player
-      //  - cells: list of four (y, x) cells
-      //  - returns true if all are legal coordinates & all match currPlayer
-      console.log(`height is ${this.height}`);
-      console.log(`width is ${this.width}`);
+    const _win = cells => {
       return cells.every(
         ([y, x]) =>
           y >= 0 &&
@@ -142,21 +154,6 @@ class Game {
           x < this.width &&
           this.board[y][x] === this.currPlayer
       );
-    } */
-      function _win(cells) {
-        // Check four cells to see if they're all color of current player
-        //  - cells: list of four (y, x) cells
-        //  - returns true if all are legal coordinates & all match currPlayer
-        console.log(`height is ${height}`);
-        console.log(`width is ${width}`);
-        return cells.every(
-          ([y, x]) =>
-            y >= 0 &&
-            y < height &&
-            x >= 0 &&
-            x < width &&
-            board[y][x] === currPlayer
-        );
     }
 
 
@@ -171,6 +168,7 @@ class Game {
 
         // find winner (only checking each win-possibility as needed)
         if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
+          this.isOver = true;
           return true;
         }
       }
