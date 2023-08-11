@@ -13,15 +13,13 @@ class Player {
 }
 
 class Game {
-  constructor(height, width, currPlayer = 1){
+  constructor(height, width){
     this.height = height;
     this.width = width;
-    this.currPlayer = currPlayer;
     this.isOver = false;
 
     this.makeHtmlBoard()
     this.makeStartButton();
-    this.getPlayerColors();
     //add a form that takes color submissions before game starts
     /* this.p1 = new Player('red'); //take color from form submission
     this.p1 = new Player('blue'); */
@@ -36,8 +34,11 @@ class Game {
     //startButton.setAttribute('id', 'startButton');
 
     startButton.addEventListener('click', () => {
+
+      this.isOver = false;
+      this.getPlayerColors();
       this.makeBoard();
-      this.makeHtmlBoard()
+      this.makeHtmlBoard();
     });
 
     //outerGame.prepend(startButton);
@@ -56,9 +57,13 @@ class Game {
   }
 
   getPlayerColors() {
-    //gets colors from form
-    //set p1 and p2
-    //set current player as this.p1
+    const p1Color = document.getElementById('p1Color').value;
+    const p2Color = document.getElementById('p2Color').value;
+
+    this.p1 = new Player(p1Color);
+    this.p2 = new Player(p2Color);
+
+    this.currPlayer = this.p1;
   }
 
   /** makeHtmlBoard: make HTML table and row of column tops.*/
@@ -110,7 +115,7 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    piece.style.backgroundColor = this.currPlayer.color;
 
     const spot = document.getElementById(`c-${y}-${x}`);
     spot.append(piece);
@@ -144,7 +149,7 @@ class Game {
         //remove event listeners in top row
 
 
-        return this.endGame(`Player ${this.currPlayer} won!`);
+        return this.endGame(`The ${this.currPlayer.color} player won!`);
 
       }
 
@@ -196,5 +201,6 @@ class Game {
 }
 
 new Game(6, 7);
+//instead we could have had a button here, that creates a new instance of the game
 
 //getting TypeError: this.findSpotForCol is not a function on like 100:20 - why is not a function?
