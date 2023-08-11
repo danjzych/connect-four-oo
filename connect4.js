@@ -5,6 +5,12 @@
  * board fills (tie)
  */
 
+class Player {
+  constructor(color){
+    this.color = color;//assume we pass in a valid color
+    //Do we need more here?
+  }
+}
 
 class Game {
   constructor(height, width, currPlayer = 1){
@@ -15,21 +21,26 @@ class Game {
 
     this.makeHtmlBoard()
     this.makeStartButton();
+    this.getPlayerColors();
+    //add a form that takes color submissions before game starts
+    /* this.p1 = new Player('red'); //take color from form submission
+    this.p1 = new Player('blue'); */
   }
 
   makeStartButton() {
 
-    const outerGame = document.getElementById('game');
-    const startButton = document.createElement('button');
+    //const outerGame = document.getElementById('game');
+    /* const startButton = document.createElement('button'); */
+    const startButton = document.getElementById("startButton");
     startButton.innerText = 'Click me to (re)start';
-    startButton.setAttribute('id', 'startButton');
+    //startButton.setAttribute('id', 'startButton');
 
     startButton.addEventListener('click', () => {
       this.makeBoard();
       this.makeHtmlBoard()
     });
 
-    outerGame.prepend(startButton);
+    //outerGame.prepend(startButton);
 
   }
 
@@ -42,6 +53,12 @@ class Game {
     for (let y = 0; y < this.height; y++) {
       this.board.push(Array.from({ length: this.width }));
     }
+  }
+
+  getPlayerColors() {
+    //gets colors from form
+    //set p1 and p2
+    //set current player as this.p1
   }
 
   /** makeHtmlBoard: make HTML table and row of column tops.*/
@@ -137,7 +154,9 @@ class Game {
       }
 
       // switch players
-      this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+     /*  this.currPlayer = this.currPlayer === 1 ? 2 : 1; */
+      this.currPlayer = this.currPlayer === this.p1 ? this.p2 : this.p1;
+
     }
 
   }
